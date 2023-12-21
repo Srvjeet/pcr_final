@@ -41,6 +41,7 @@ export const adminSurveyRoute = "/sys/eventsurvey"
 /*/////////// i have added route  /////////*/
 export const addFormRoute = "/sys/addform"
 export const ClientRoute = "/Client"
+export const MailblastRoute = "/sys/Mailblast"
 /*////////////////////////////////////*/
 
 export const clientLoginRoute = "/login"

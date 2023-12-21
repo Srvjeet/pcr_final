@@ -23,6 +23,7 @@ import {
   NotFound as NotFoundView,
   AddForm as AddFormView,
   Client as ClientView,
+  Mailblast as MailblastView,
 } from "./views"
 
 const Routes = () => {
@@ -66,6 +67,13 @@ const Routes = () => {
       />
 
       <RouteWithLayout
+        component={MailblastView}
+        exact
+        layout={AdminMainLayout}
+        path={Commons.MailblastRoute}
+      />
+
+      <RouteWithLayout
         component={ClientView}
         exact
         layout={MinimalLayout}
@@ -73,7 +81,7 @@ const Routes = () => {
       />
 
       {/*///////////////////////////////////////////////////////////////////*/}
-      
+
       <RouteWithLayout
         component={ClientLoginView}
         exact

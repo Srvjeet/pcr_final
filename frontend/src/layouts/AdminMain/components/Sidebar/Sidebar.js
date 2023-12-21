@@ -124,6 +124,28 @@ const Sidebar = (props) => {
           </div>
           
       {/* ++++++++++++++++++++++++++   AddForm Control added ends here +++++++++++++++++++++++++++++++ */}
+
+      {/* ++++++++++++++++++++++++++   Mail blast Control added  +++++++++++++++++++++++++++++++ */}
+      <div>
+            <div onClick={()=>history.replace('/sys/Mailblast')}
+              style={{
+                color: '#6fa8dc',
+                marginLeft: 14,
+                top: 15,
+                fontSize: 15,
+                padding: 10,
+                border: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+
+              }}
+            >
+              📮<span style={{ marginLeft: '12px' }}>Mail Blast</span>
+            </div>
+          </div>
+          
+      {/* ++++++++++++++++++++++++++   Mailblast Control added ends here +++++++++++++++++++++++++++++++ */}
+
       </div>
       <Button className="p-0" onClick={collapseToggle}>
         {isCollapsed ? (

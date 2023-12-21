@@ -16,7 +16,8 @@ export { default as ClientSurvey } from "./Client/SurveyClient"
 
 // ++++++++++++++++++++++++ we have added AddForm route +++++++++++++++++++++++++++++ //
 export { default as AddForm } from "./Admin/SurveyAdmin/AddForm"
-export { default as Client }  from "./Client/SurveyClient/Client"
+export { default as Client }  from "./Client/SurveyClient/Client";
+export { default as Mailblast } from "./Admin/SurveyAdmin/Mailblast";
 // ++++++++++++++++++++++++ we have added AddForm route +++++++++++++++++++++++++++++ //
 
 export { default as NotFound } from "./NotFound"

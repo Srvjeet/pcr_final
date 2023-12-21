@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { withRouter } from "react-router-dom";
 import axios from 'axios';
 import styled from 'styled-components';
+import * as Commons from '../../../common/common'
 
 const FeedbackContainer = styled.div`
   max-width: 1000px;
@@ -47,96 +48,81 @@ const FeedbackContainer = styled.div`
 
 function SurveyAdmin() {
   const [surveys, setSurveys] = useState([]);
+  const [surveyName, setSurveyName] = useState('');
+  const [render, setRender] = useState(0);
+  const [selectedSurvey, setSelectedSurvey] = useState([]);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { data } = await axios.get('http://localhost:8080/api/eventsurvey/');
-        console.log('Raw Data:', data);
-        setSurveys(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    getData();
-  }, []);
-
-
-  // Function to delete the data
-  const handleDelete = async (id) => {
-    try {
-      // Perform the delete operation using the survey id
-      await axios.delete(`http://localhost:8080/api/eventsurvey/${id}`);
-
-      // Update the surveys state to reflect the deletion
-      setSurveys((prevSurveys) => prevSurveys.filter((survey) => survey.id !== id));
-    } catch (error) {
-      console.error('Error deleting survey:', error);
+  useEffect(()=>{
+    const getForms=async()=>{
+      const surveyList = await axios.get(`${Commons.baseURL}/surveys`);
+      setSurveys(surveyList.data[0]);
     }
-  };
+    getForms();
+  },[])
+
+  useEffect(()=>{
+    if(surveys.length===1){
+      const renderForm=async ()=>{
+        const forms = await axios.get(`${Commons.baseURL}/Query/${Object.values(surveys[0])[0]}`);
+        console.log(forms.data[0]);
+        setSelectedSurvey(forms.data[0]);
+      }
+      renderForm();
+    }else if(surveyName !== ''){
+      const renderForm=async ()=>{
+        const forms = await axios.get(`${Commons.baseURL}/Query/${surveyName}`);
+        console.log(forms.data[0]);
+        setSelectedSurvey(forms.data[0]);
+      }
+      renderForm();
+    }
+  },[render,surveyName])
+
+  const handleDelete = ()=>{
+    axios.delete(`${Commons.baseURL}/DeleteSurveys/${Object.values(selectedSurvey[0]).slice(1).find(b=>(b.type==='formname')).name}`).then(data=>alert('Survey Deleted SuccessFully!')).catch(err=>alert('Delete Failed!'));
+    axios.delete(`${Commons.baseURL}/RemoveMapping/${Object.values(selectedSurvey[0]).slice(1).find(b=>(b.type==='formname')).name}`).then(data=>alert('Survey Deleted SuccessFully!')).catch(err=>alert('Delete Failed!'));
+    setSelectedSurvey([]);
+  }
+
   return (
+    <div>
+      {surveys.length===1 ? (render===0 && setRender(1)) : <select onChange={(e)=>setSurveyName(e.target.value)}>
+        {surveys.map((s)=>(
+          <option key={s.SURVEY_NAME}>{s.SURVEY_NAME}</option>
+        ))}
+      </select>}
     <FeedbackContainer>
       <div className='h-title'>
         <h1>Feedback Data</h1>
       </div>
+      {selectedSurvey && selectedSurvey.length!==0 && 
       <table>
         <thead>
           <tr>
-            {/*<th>ID</th>*/}
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Test Type</th>
-            <th>Date Range</th>
-            <th>Test date</th>
-            <th>Venue</th>
-            <th>Staff Behavior</th>
-            <th>Equipment</th>
-            <th>Overall Experience</th>
-            <th>Feedback</th>
-            <th>Action</th>
+            {Object.values(selectedSurvey[0]).slice(2).map((survey,index)=>(
+              <td key={index}>{survey.name}</td>
+            ))}
           </tr>
         </thead>
-        <tbody>
-          {surveys.map(item => (
-            <tr key={item.id}>
-              {/*<td>{item.id}</td>*/}
-              <td>{item.fname}</td>
-              <td>{item.lname}</td>
-              <td>{item.email}</td>
-              <td>{item.ttype}</td>
-              <td>{item.formattedDateRange}</td>
-              <td>{item.formattedTestDate}</td>
-              <td>{item.venue}</td>
-              <td>{item.staff}</td>
-              <td>{item.equipment}</td>
-              <td>{item.overall}</td>
-              <td>{item.feedback}</td>
-
-              {/* delete button STARTS*/}
-              <td style={{ textAlign: 'center' }}>
-                <button
-                  style={{
-                    color: '#FFFFFF',
-                    padding: '8px 12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => handleDelete(item.id)}
-                >
-                  🚫
-                </button>
-              </td>
-              {/* delete button ENDS*/}
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        {selectedSurvey.length > 1 && <tbody>
+    {selectedSurvey.slice(1).map((survey, index) => (
+      <tr key={index}>
+        {Object.values(survey).slice(2).map((data, i) => (
+          <td key={i}>
+            {data && Object.values(data)[0] !== null
+              ? Object.values(data)[0]
+              : "N/A" /* Replace with your preferred placeholder */}
+          </td>
+        ))}
+      </tr>
+    ))}
+  </tbody>}
+      </table>}
     </FeedbackContainer>
+    {selectedSurvey && <button onClick={handleDelete}>DELETE</button>}
+    </div>
   );
 }
 
 export default withRouter(SurveyAdmin)
-
 
